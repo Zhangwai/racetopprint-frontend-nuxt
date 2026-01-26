@@ -35,9 +35,8 @@
 </template>
 
 <script setup lang="ts">
-import type { ComponentConfig, ComponentDefinition, PropertySchema } from '~/types/component-builder'
-import { carouselConfig } from './config/carousel.config'
-import { productListConfig } from './config/product-list.config'
+import type { ComponentConfig, PropertySchema } from '~/types/component-builder'
+import { componentConfigMap } from './components/index'
 import StringInput from './property-editors/StringInput.vue'
 import NumberInput from './property-editors/NumberInput.vue'
 import BooleanSwitch from './property-editors/BooleanSwitch.vue'
@@ -50,14 +49,9 @@ const props = defineProps<{
   selectedComponent: ComponentConfig | null
 }>()
 
-const componentConfigs: Record<string, ComponentDefinition> = {
-  'carousel': carouselConfig,
-  'product-list': productListConfig
-}
-
 const propertySchema = computed(() => {
   if (!props.selectedComponent) return {}
-  const config = componentConfigs[props.selectedComponent.type]
+  const config = componentConfigMap[props.selectedComponent.type]
   return config?.propertySchema || {}
 })
 

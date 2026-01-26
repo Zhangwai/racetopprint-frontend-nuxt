@@ -256,15 +256,14 @@ const gridStyle = computed(() => {
 }
 
 .load-more-btn {
-  display: block;
-  width: 200px;
-  margin: 0 auto;
-  padding: 12px 24px;
+  width: 100%;
+  padding: 12px;
   background-color: #f3f4f6;
   color: #374151;
   border: 1px solid #d1d5db;
   border-radius: 6px;
   font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -274,7 +273,7 @@ const gridStyle = computed(() => {
 }
 
 .load-more-btn:disabled {
-  opacity: 0.5;
   cursor: not-allowed;
+  opacity: 0.6;
 }
 </style>

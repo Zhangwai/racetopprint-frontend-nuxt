@@ -105,8 +105,7 @@
 
 <script setup lang="ts">
 import type { ComponentConfig, ComponentDefinition, PageConfig } from '~/types/component-builder'
-import { carouselConfig } from '~/components/builder/config/carousel.config'
-import { productListConfig } from '~/components/builder/config/product-list.config'
+import { componentDefinitions } from '~/components/builder/components/index'
 
 const categories = [
   { value: 'all', label: '全部' },
@@ -118,10 +117,7 @@ const categories = [
 
 const currentCategory = ref('all')
 
-const components: ComponentDefinition[] = [
-  carouselConfig,
-  productListConfig
-]
+const components: ComponentDefinition[] = componentDefinitions
 
 const filteredComponents = computed(() => {
   if (currentCategory.value === 'all') {

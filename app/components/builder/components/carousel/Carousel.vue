@@ -107,21 +107,24 @@ onUnmounted(() => {
 
 <style scoped>
 .carousel {
-  position: relative;
   width: 100%;
+  height: 400px;
   overflow: hidden;
+  position: relative;
   border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .carousel-track {
   display: flex;
   height: 100%;
+  transition: transform 0.3s ease;
 }
 
 .carousel-slide {
-  position: relative;
+  min-width: 100%;
   height: 100%;
-  flex-shrink: 0;
+  position: relative;
 }
 
 .carousel-slide img {
@@ -133,48 +136,53 @@ onUnmounted(() => {
 .slide-title {
   position: absolute;
   bottom: 60px;
-  left: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.7);
   color: white;
+  padding: 10px 20px;
   font-size: 24px;
   font-weight: bold;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
 }
 
 .slide-description {
   position: absolute;
   bottom: 20px;
-  left: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.5);
   color: white;
+  padding: 8px 16px;
   font-size: 14px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
 }
 
 .carousel-arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
-  border: none;
-  border-radius: 50%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.5);
   color: white;
-  font-size: 20px;
+  border: none;
+  padding: 15px;
+  font-size: 24px;
   cursor: pointer;
   z-index: 10;
-  transition: background-color 0.2s;
+  border-radius: 50%;
+  transition: background 0.3s;
 }
 
 .carousel-arrow:hover {
-  background-color: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.8);
 }
 
 .carousel-arrow.prev {
-  left: 10px;
+  left: 15px;
 }
 
 .carousel-arrow.next {
-  right: 10px;
+  right: 15px;
 }
 
 .carousel-indicators {
@@ -183,26 +191,25 @@ onUnmounted(() => {
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 
 .indicator {
-  width: 30px;
-  height: 30px;
-  border: none;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.5);
   color: black;
+  border: none;
+  padding: 5px 10px;
   cursor: pointer;
-  transition: all 0.2s;
+  border-radius: 4px;
+  transition: background 0.3s;
 }
 
 .indicator:hover {
-  background-color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.8);
 }
 
 .indicator.active {
-  background-color: white;
+  background: white;
   font-weight: bold;
 }
 </style>

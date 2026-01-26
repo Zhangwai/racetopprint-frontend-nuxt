@@ -1,29 +1,19 @@
 // app/composables/useComponentRenderer.ts
 
 import type { ComponentConfig, ComponentCondition, ComponentAnimation } from '~/types/component-builder'
+import { componentImports, loadComponent as loadComponentFromRegistry } from '~/components/builder/components/index'
 
 /**
  * 组件渲染引擎
+ * 从组件注册中心获取组件导入映射表，避免重复维护
  */
 export const useComponentRenderer = () => {
-  const componentImports: Record<string, () => Promise<{ default: any }>> = {
-    'carousel': () => import('~/components/builder/Carousel.vue'),
-    'product-list': () => import('~/components/builder/ProductList.vue')
-  }
+  // 直接使用组件注册中心的组件导入映射表
+  // 这样新增组件时只需要在注册中心注册一次，不需要修改这里
 
   const loadComponent = async (type: string): Promise<any> => {
-    const loader = componentImports[type]
-    if (!loader) {
-      console.warn(`Component type "${type}" not found`)
-      return null
-    }
-    try {
-      const module = await loader()
-      return module.default
-    } catch (error) {
-      console.error(`Failed to load component "${type}":`, error)
-      return null
-    }
+    // 委托给组件注册中心的 loadComponent 函数
+    return await loadComponentFromRegistry(type)
   }
 
   const renderComponent = async (component: ComponentConfig) => {
