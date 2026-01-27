@@ -1,27 +1,27 @@
 // app/components/builder/components/index.ts
 // 组件注册中心 - 统一管理所有组件的配置和导入
 
-import type { ComponentDefinition } from '~/types/component-builder'
+import type { ComponentDefinition } from "~/types/component-builder"
 
 // Banner 组件
-import { bannerConfig } from './banner/banner.config'
-export { bannerConfig } from './banner/banner.config'
-export { default as BannerComponent } from './banner/Banner.vue'
+import { bannerConfig } from "./banner/index.config"
+export { bannerConfig } from "./banner/index.config"
+export { default as BannerComponent } from "./banner/index.vue"
 
 // Carousel 组件
-import { carouselConfig } from './carousel/carousel.config'
-export { carouselConfig } from './carousel/carousel.config'
-export { default as CarouselComponent } from './carousel/Carousel.vue'
+import { carouselConfig } from "./carousel/index.config"
+export { carouselConfig } from "./carousel/index.config"
+export { default as CarouselComponent } from "./carousel/index.vue"
 
 // ProductList 组件
-import { productListConfig } from './product-list/product-list.config'
-export { productListConfig } from './product-list/product-list.config'
-export { default as ProductListComponent } from './product-list/ProductList.vue'
+import { productListConfig } from "./product-list/index.config"
+export { productListConfig } from "./product-list/index.config"
+export { default as ProductListComponent } from "./product-list/index.vue"
 
 // Navbar 组件
-import { navbarConfig } from './navbar/navbar.config'
-export { navbarConfig } from './navbar/navbar.config'
-export { default as NavbarComponent } from './navbar/Navbar.vue'
+import { navbarConfig } from "./navbar/index.config"
+export { navbarConfig } from "./navbar/index.config"
+export { default as NavbarComponent } from "./navbar/index.vue"
 
 /**
  * 所有组件配置列表
@@ -31,7 +31,7 @@ export const componentDefinitions: ComponentDefinition[] = [
   bannerConfig,
   carouselConfig,
   productListConfig,
-  navbarConfig
+  navbarConfig,
 ]
 
 /**
@@ -39,22 +39,23 @@ export const componentDefinitions: ComponentDefinition[] = [
  * 用于根据组件类型快速查找配置
  */
 export const componentConfigMap: Record<string, ComponentDefinition> = {
-  'banner': bannerConfig,
-  'carousel': carouselConfig,
-  'product-list': productListConfig,
-  'navbar': navbarConfig
+  banner: bannerConfig,
+  carousel: carouselConfig,
+  "product-list": productListConfig,
+  navbar: navbarConfig,
 }
 
 /**
  * 组件导入映射表
  * 用于动态加载组件
  */
-export const componentImports: Record<string, () => Promise<{ default: any }>> = {
-  'banner': () => import('./banner/Banner.vue'),
-  'carousel': () => import('./carousel/Carousel.vue'),
-  'product-list': () => import('./product-list/ProductList.vue'),
-  'navbar': () => import('./navbar/Navbar.vue')
-}
+export const componentImports: Record<string, () => Promise<{ default: any }>> =
+  {
+    banner: () => import("./banner/index.vue"),
+    carousel: () => import("./carousel/index.vue"),
+    "product-list": () => import("./product-list/index.vue"),
+    navbar: () => import("./navbar/index.vue"),
+  }
 
 /**
  * 组件元数据
@@ -81,14 +82,16 @@ export const getComponentMetadata = (): ComponentMetadata[] => {
     description: config.description,
     category: config.category,
     config,
-    loader: componentImports[config.type]
+    loader: componentImports[config.type],
   }))
 }
 
 /**
  * 根据类型获取组件配置
  */
-export const getComponentConfig = (type: string): ComponentDefinition | undefined => {
+export const getComponentConfig = (
+  type: string
+): ComponentDefinition | undefined => {
   return componentConfigMap[type]
 }
 
@@ -136,7 +139,9 @@ export const getComponentTypes = (): string[] => {
 /**
  * 根据分类筛选组件
  */
-export const getComponentsByCategory = (category: string): ComponentDefinition[] => {
+export const getComponentsByCategory = (
+  category: string
+): ComponentDefinition[] => {
   return componentDefinitions.filter((config) => config.category === category)
 }
 
