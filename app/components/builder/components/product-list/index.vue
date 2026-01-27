@@ -66,7 +66,9 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
+import { computed } from 'vue'
+
+const props = withDefaults(defineProps<{
   products: Array<{
     id: string
     name: string
@@ -90,7 +92,17 @@ const props = defineProps<{
   showLoadMore?: boolean
   loadMoreText?: string
   loading?: boolean
-}>()
+}>(), {
+  layout: 'grid',
+  columns: 4,
+  limit: 10,
+  showPrice: true,
+  showDiscount: true,
+  showAddToCart: true,
+  addToCartText: '加入购物车',
+  showLoadMore: false,
+  loadMoreText: '加载更多'
+})
 
 defineEmits<{
   (e: 'product-click', product: any): void

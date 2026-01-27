@@ -1,6 +1,6 @@
 import type { ComponentDefinition } from '~/types/component-builder'
 
-export const productListConfig: ComponentDefinition = {
+const productListConfig: ComponentDefinition = {
   type: 'product-list',
   name: '商品列表',
   icon: '📦',
@@ -183,3 +183,4 @@ export const productListConfig: ComponentDefinition = {
   preview: 'https://picsum.photos/300/300',
   tags: ['商品', '列表', '网格', '产品展示']
 }
+export  default productListConfig

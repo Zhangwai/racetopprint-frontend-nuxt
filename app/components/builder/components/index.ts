@@ -43,8 +43,8 @@ export const autoRegisterComponents = async (): Promise<void> => {
         )
 
       const config =
-        configModule[`${dir.name}Config`] ||
-        (configModule.default as ComponentDefinition)
+        (configModule.default as ComponentDefinition) ||
+        configModule[`${dir.name}Config`]
 
       if (config) {
         componentDefinitions.push(config)
