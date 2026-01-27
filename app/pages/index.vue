@@ -6,6 +6,7 @@
       <NuxtLink to="/about">关于我们</NuxtLink>
       <NuxtLink to="/contact">联系我们</NuxtLink>
       <NuxtLink to="/products">产品列表</NuxtLink>
+      <NuxtLink to="/pages" class="pages-link">页面管理</NuxtLink>
     </div>
   </div>
 </template>
@@ -55,5 +56,13 @@ p {
 
 .nav-links a:hover {
   background: #2b6cb0;
+}
+
+.nav-links .pages-link {
+  background: #48bb78;
+}
+
+.nav-links .pages-link:hover {
+  background: #38a169;
 }
 </style>
