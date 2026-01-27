@@ -1,13 +1,12 @@
 <template>
   <div class="page-container">
-    <!-- 页面加载状态 -->
-    <div v-if="pageStore.isLoading" class="loading-state">
-      <div class="spinner"></div>
-      <p>页面加载中...</p>
-    </div>
-
     <!-- 页面内容 -->
-    <div v-else-if="pageConfig" class="page-content">
+    <div v-if="pageConfig" class="page-content">
+      <!-- 页面加载状态 -->
+      <div v-if="pageStore.isLoading" class="loading-state">
+        <div class="spinner"></div>
+        <p>页面加载中...</p>
+      </div>
       <!-- 组件渲染器 -->
       <component-renderer :components="pageConfig.components" />
     </div>

@@ -3,60 +3,61 @@
 
 import type { ComponentDefinition } from "~/types/component-builder"
 
-// Banner 组件
-import { bannerConfig } from "./banner/index.config"
-export { bannerConfig } from "./banner/index.config"
-export { default as BannerComponent } from "./banner/index.vue"
-
-// Carousel 组件
-import { carouselConfig } from "./carousel/index.config"
-export { carouselConfig } from "./carousel/index.config"
-export { default as CarouselComponent } from "./carousel/index.vue"
-
-// ProductList 组件
-import { productListConfig } from "./product-list/index.config"
-export { productListConfig } from "./product-list/index.config"
-export { default as ProductListComponent } from "./product-list/index.vue"
-
-// Navbar 组件
-import { navbarConfig } from "./navbar/index.config"
-export { navbarConfig } from "./navbar/index.config"
-export { default as NavbarComponent } from "./navbar/index.vue"
-
-/**
- * 所有组件配置列表
- * 用于在 Builder 页面中显示组件库
- */
-export const componentDefinitions: ComponentDefinition[] = [
-  bannerConfig,
-  carouselConfig,
-  productListConfig,
-  navbarConfig,
-]
-
-/**
- * 组件配置映射表
- * 用于根据组件类型快速查找配置
- */
-export const componentConfigMap: Record<string, ComponentDefinition> = {
-  banner: bannerConfig,
-  carousel: carouselConfig,
-  "product-list": productListConfig,
-  navbar: navbarConfig,
+// 定义组件目录结构
+export interface ComponentDirectory {
+  name: string // 目录名，也作为组件类型
+  path: string // 相对路径
 }
 
-/**
- * 组件导入映射表
- * 用于动态加载组件
- */
+// 所有组件目录列表 - 这里只需维护目录名即可
+const componentDirectories: ComponentDirectory[] = [
+  { name: "banner", path: "./banner" },
+  { name: "carousel", path: "./carousel" },
+  { name: "product-list", path: "./product-list" },
+  { name: "navbar", path: "./navbar" },
+  // 添加新组件时只需在这里添加目录名
+]
+// 存储所有组件的配置和导入
+export const componentDefinitions: ComponentDefinition[] = []
+export const componentConfigMap: Record<string, ComponentDefinition> = {}
 export const componentImports: Record<string, () => Promise<{ default: any }>> =
-  {
-    banner: () => import("./banner/index.vue"),
-    carousel: () => import("./carousel/index.vue"),
-    "product-list": () => import("./product-list/index.vue"),
-    navbar: () => import("./navbar/index.vue"),
-  }
+  {}
+/**
+ * 自动注册组件
+ * 遍历组件目录，动态导入配置和组件
+ */
+export const autoRegisterComponents = async (): Promise<void> => {
+  for (const dir of componentDirectories) {
+    try {
+      // 动态导入配置
+      const configModule = await import(
+        /* @vite-ignore */
+        `${dir.path}/index.config.ts`
+      )
 
+      // 动态导入组件
+      const importFn = () =>
+        import(
+          /* @vite-ignore */
+          `${dir.path}/index.vue`
+        )
+
+      const config =
+        configModule[`${dir.name}Config`] ||
+        (configModule.default as ComponentDefinition)
+
+      if (config) {
+        componentDefinitions.push(config)
+        componentConfigMap[dir.name] = config
+        componentImports[dir.name] = importFn
+        console.log(`✓ Registered component: ${dir.name}`)
+      }
+    } catch (error) {
+      console.warn(`Failed to register component "${dir.name}":`, error)
+    }
+  }
+}
+autoRegisterComponents()
 /**
  * 组件元数据
  * 包含组件的所有信息

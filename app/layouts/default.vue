@@ -146,7 +146,6 @@ useHead({
 
 .main {
   flex: 1;
-  padding: 2rem 0;
 }
 
 .footer {
