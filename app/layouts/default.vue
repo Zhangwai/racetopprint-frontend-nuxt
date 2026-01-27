@@ -21,6 +21,9 @@
           <NuxtLink to="/contact" class="nav-link" active-class="active">
             联系我们
           </NuxtLink>
+          <NuxtLink to="/user" class="nav-link" active-class="active">
+            👤 用户中心
+          </NuxtLink>
         </nav>
       </div>
     </header>

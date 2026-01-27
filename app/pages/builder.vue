@@ -74,7 +74,7 @@
           @drop="onDrop"
         >
           <div
-            v-for="(component, index) in pageConfig.components"
+            v-for="(component, index) in pageComponents"
             :key="component.id"
             class="canvas-component"
             :class="{ selected: selectedComponentId === component.id }"
@@ -91,7 +91,7 @@
             </div>
           </div>
           
-          <div v-if="pageConfig.components.length === 0" class="empty-canvas">
+          <div v-if="pageComponents.length === 0" class="empty-canvas">
             <p>从左侧拖拽组件到这里开始构建页面</p>
           </div>
         </div>
@@ -106,6 +106,11 @@
 <script setup lang="ts">
 import type { ComponentConfig, ComponentDefinition, PageConfig } from '~/types/component-builder'
 import { componentDefinitions } from '~/components/builder/components/index'
+import { useRoute, useRouter } from 'vue-router'
+
+const route = useRoute()
+const router = useRouter()
+const pageManager = usePageManager()
 
 const categories = [
   { value: 'all', label: '全部' },
@@ -116,6 +121,9 @@ const categories = [
 ]
 
 const currentCategory = ref('all')
+const currentPageId = ref<string | null>(null)
+const currentPage = ref<PageConfig | null>(null)
+const pageComponents = ref<ComponentConfig[]>([])
 
 const components: ComponentDefinition[] = componentDefinitions
 
@@ -126,31 +134,74 @@ const filteredComponents = computed(() => {
   return components.filter(c => c.category === currentCategory.value)
 })
 
-const pageConfig = ref<PageConfig>({
-  id: `page-${Date.now()}`,
-  name: '首页',
-  slug: 'home',
-  title: '首页',
-  description: '首页描述',
-  keywords: '首页,关键词',
-  components: [],
-  status: 'draft',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  authorId: 'admin'
+// 加载页面
+const loadCurrentPage = async () => {
+  const pageId = route.query.pageId as string
+  if (pageId) {
+    currentPageId.value = pageId
+    const page = await pageManager.loadPage(pageId)
+    if (page) {
+      currentPage.value = page
+      // 加载页面组件
+      pageComponents.value = page.components.map(c => ({
+        ...c,
+        id: c.id || generateId()
+      }))
+      saveToHistory()
+    }
+  }
+}
+
+// 保存页面
+const saveCurrentPage = async () => {
+  if (currentPageId.value && currentPage.value) {
+    try {
+      await pageManager.savePage(currentPageId.value, {
+        ...currentPage.value,
+        components: pageComponents.value
+      })
+      alert('页面已保存！')
+    } catch (error) {
+      console.error('Failed to save page:', error)
+      alert('保存页面失败！')
+    }
+  }
+}
+
+// 发布页面
+const publishCurrentPage = async () => {
+  if (currentPageId.value) {
+    try {
+      await pageManager.publishPage(currentPageId.value)
+      alert('页面已发布！')
+    } catch (error) {
+      console.error('Failed to publish page:', error)
+      alert('发布页面失败！')
+    }
+  }
+}
+
+// 生成唯一ID
+const generateId = () => {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2)
+}
+
+onMounted(() => {
+  loadCurrentPage()
 })
 
+// 使用当前页面配置代替默认配置
 const selectedComponentId = ref<string | null>(null)
 const selectedComponent = computed(() => {
-  return pageConfig.value.components.find(c => c.id === selectedComponentId.value) || null
+  return pageComponents.value.find(c => c.id === selectedComponentId.value) || null
 })
 
-const history = ref<PageConfig[]>([JSON.parse(JSON.stringify(pageConfig.value))])
+const history = ref<ComponentConfig[][]>([[]])
 const historyIndex = ref(0)
 
 const saveToHistory = () => {
   const newHistory = history.value.slice(0, historyIndex.value + 1)
-  newHistory.push(JSON.parse(JSON.stringify(pageConfig.value)))
+  newHistory.push(JSON.parse(JSON.stringify(pageComponents.value)))
   history.value = newHistory
   historyIndex.value = newHistory.length - 1
 }
@@ -158,14 +209,14 @@ const saveToHistory = () => {
 const undo = () => {
   if (historyIndex.value > 0) {
     historyIndex.value--
-    pageConfig.value = JSON.parse(JSON.stringify(history.value[historyIndex.value]))
+    pageComponents.value = JSON.parse(JSON.stringify(history.value[historyIndex.value]))
   }
 }
 
 const redo = () => {
   if (historyIndex.value < history.value.length - 1) {
     historyIndex.value++
-    pageConfig.value = JSON.parse(JSON.stringify(history.value[historyIndex.value]))
+    pageComponents.value = JSON.parse(JSON.stringify(history.value[historyIndex.value]))
   }
 }
 
@@ -198,14 +249,14 @@ const onDrop = (event: DragEvent) => {
         id: `component-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         type: componentType,
         props: props,
-        position: pageConfig.value.components.length,
+        position: pageComponents.value.length,
         createdAt: new Date(),
         updatedAt: new Date()
       }
       
       console.log('onDrop - newComponent:', newComponent)
-      pageConfig.value.components.push(newComponent)
-      console.log('onDrop - components after push:', pageConfig.value.components)
+      pageComponents.value.push(newComponent)
+      console.log('onDrop - components after push:', pageComponents.value)
       saveToHistory()
       console.log('onDrop - history saved')
     } catch (error) {
@@ -221,9 +272,9 @@ const selectComponent = (componentId: string) => {
 }
 
 const deleteComponent = (componentId: string) => {
-  const index = pageConfig.value.components.findIndex(c => c.id === componentId)
+  const index = pageComponents.value.findIndex(c => c.id === componentId)
   if (index !== -1) {
-    pageConfig.value.components.splice(index, 1)
+    pageComponents.value.splice(index, 1)
     if (selectedComponentId.value === componentId) {
       selectedComponentId.value = null
     }
@@ -258,12 +309,12 @@ const onComponentDrop = (event: DragEvent, index: number) => {
       createdAt: new Date(),
       updatedAt: new Date()
     };
-    pageConfig.value.components.splice(index, 0, newComponent);
+    pageComponents.value.splice(index, 0, newComponent);
     saveToHistory();
   } else if (draggedComponentIndex.value !== null && draggedComponentIndex.value !== index) {
     // Reorder existing component
-    const component = pageConfig.value.components.splice(draggedComponentIndex.value, 1)[0];
-    pageConfig.value.components.splice(index, 0, component);
+    const component = pageComponents.value.splice(draggedComponentIndex.value, 1)[0];
+    pageComponents.value.splice(index, 0, component);
     saveToHistory();
   }
   
@@ -272,25 +323,26 @@ const onComponentDrop = (event: DragEvent, index: number) => {
 
 const clearCanvas = () => {
   if (confirm('确定要清空画布吗？')) {
-    pageConfig.value.components = []
+    pageComponents.value = []
     selectedComponentId.value = null
     saveToHistory()
   }
 }
 
 const savePage = () => {
-  console.log('保存页面:', pageConfig.value)
-  alert('页面已保存！')
+  saveCurrentPage()
 }
 
 const previewPage = () => {
-  console.log('预览页面:', pageConfig.value)
-  window.open(`/preview/${pageConfig.value.slug}`, '_blank')
+  if (currentPage.value) {
+    window.open(`/preview/${currentPage.value.slug}`, '_blank')
+  } else {
+    alert('请先保存页面！')
+  }
 }
 
 const publishPage = () => {
-  console.log('发布页面:', pageConfig.value)
-  alert('页面已发布！')
+  publishCurrentPage()
 }
 </script>
 

@@ -20,7 +20,9 @@ export default defineNuxtConfig({
   },
 
   // 模块配置
-  modules: [],
+  modules: [
+    '@pinia/nuxt'
+  ],
 
   // 开发服务器配置
   devServer: {
