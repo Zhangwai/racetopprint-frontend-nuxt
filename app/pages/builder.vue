@@ -105,7 +105,7 @@
 
 <script setup lang="ts">
 import type { ComponentConfig, ComponentDefinition, PageConfig } from '~/types/component-builder'
-import { componentDefinitions } from '~/components/builder/components/index'
+import { getComponentDefinitions } from '~/composables/useComponentRegistry'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
@@ -125,7 +125,7 @@ const currentPageId = ref<string | null>(null)
 const currentPage = ref<PageConfig | null>(null)
 const pageComponents = ref<ComponentConfig[]>([])
 
-const components: ComponentDefinition[] = componentDefinitions
+const components: ComponentDefinition[] = getComponentDefinitions()
 
 const filteredComponents = computed(() => {
   if (currentCategory.value === 'all') {
