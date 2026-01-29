@@ -1,7 +1,7 @@
 // app/composables/useComponentRenderer.ts
 
 import type { ComponentConfig, ComponentCondition, ComponentAnimation } from '~/types/component-builder'
-import { componentImports, loadComponent as loadComponentFromRegistry } from '~/components/builder/components/index'
+import { loadComponentByType } from '~/composables/useComponentRegistry'
 
 /**
  * 组件渲染引擎
@@ -12,8 +12,8 @@ export const useComponentRenderer = () => {
   // 这样新增组件时只需要在注册中心注册一次，不需要修改这里
 
   const loadComponent = async (type: string): Promise<any> => {
-    // 委托给组件注册中心的 loadComponent 函数
-    return await loadComponentFromRegistry(type)
+    // 委托给组件注册中心的 loadComponentByType 函数
+    return await loadComponentByType(type)
   }
 
   const renderComponent = async (component: ComponentConfig) => {

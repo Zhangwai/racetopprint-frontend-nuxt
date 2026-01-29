@@ -36,7 +36,7 @@
 
 <script setup lang="ts">
 import type { ComponentConfig, PropertySchema } from '~/types/component-builder'
-import { componentConfigMap } from './components/index'
+import { getComponentConfigMap } from '~/composables/useComponentRegistry'
 import StringInput from './property-editors/StringInput.vue'
 import NumberInput from './property-editors/NumberInput.vue'
 import BooleanSwitch from './property-editors/BooleanSwitch.vue'
@@ -44,6 +44,7 @@ import SelectInput from './property-editors/SelectInput.vue'
 import TextareaInput from './property-editors/TextareaInput.vue'
 import ColorInput from './property-editors/ColorInput.vue'
 import ArrayInput from './property-editors/ArrayInput.vue'
+import ImageUpload from './property-editors/ImageUpload.vue'
 
 const props = defineProps<{
   selectedComponent: ComponentConfig | null
@@ -51,7 +52,7 @@ const props = defineProps<{
 
 const propertySchema = computed(() => {
   if (!props.selectedComponent) return {}
-  const config = componentConfigMap[props.selectedComponent.type]
+  const config = getComponentConfigMap()[props.selectedComponent.type]
   return config?.propertySchema || {}
 })
 
@@ -63,7 +64,8 @@ const getPropertyEditor = (type: string) => {
     'select': SelectInput,
     'textarea': TextareaInput,
     'color': ColorInput,
-    'array': ArrayInput
+    'array': ArrayInput,
+    'image': ImageUpload
   }
   return editors[type] || StringInput
 }

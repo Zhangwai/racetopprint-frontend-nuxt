@@ -42,9 +42,9 @@ export const carouselConfig: ComponentDefinition = {
       itemType: 'object',
       itemSchema: {
         src: {
-          label: '图片 URL',
-          type: 'string',
-          placeholder: '输入图片链接'
+          label: '图片',
+          type: 'image',
+          placeholder: '点击上传图片'
         },
         alt: {
           label: '图片描述',

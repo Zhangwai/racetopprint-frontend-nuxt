@@ -55,8 +55,11 @@
 import type { PropertySchema } from '~/types/component-builder'
 import StringInput from './StringInput.vue'
 import NumberInput from './NumberInput.vue'
+import BooleanSwitch from './BooleanSwitch.vue'
 import SelectInput from './SelectInput.vue'
 import TextareaInput from './TextareaInput.vue'
+import ColorInput from './ColorInput.vue'
+import ImageUpload from './ImageUpload.vue'
 
 const props = defineProps<{
   modelValue: Array<Record<string, any>>
@@ -73,8 +76,11 @@ const getPropertyEditor = (type: string) => {
   const editors: Record<string, any> = {
     'string': StringInput,
     'number': NumberInput,
+    'boolean': BooleanSwitch,
     'select': SelectInput,
-    'textarea': TextareaInput
+    'textarea': TextareaInput,
+    'color': ColorInput,
+    'image': ImageUpload
   }
   return editors[type] || StringInput
 }
