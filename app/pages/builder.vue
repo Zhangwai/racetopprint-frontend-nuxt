@@ -294,6 +294,7 @@ const onComponentDragOver = (event: DragEvent, index: number) => {
 
 const onComponentDrop = (event: DragEvent, index: number) => {
   event.preventDefault()
+  event.stopPropagation() // 阻止事件冒泡，避免触发canvas的onDrop
   
   // Check if this is a new component from the library
   const componentType = event.dataTransfer?.getData('componentType');
