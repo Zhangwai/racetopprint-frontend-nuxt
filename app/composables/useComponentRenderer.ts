@@ -30,12 +30,13 @@ export const useComponentRenderer = () => {
 
   const renderComponents = async (components: ComponentConfig[]) => {
     const renderedComponents = []
+    console.log(components,'components----------')
 
     for (const component of components) {
       try {
-        if (!await checkConditions(component.conditions)) {
-          continue
-        }
+        // if (!await checkConditions(component.conditions)) {
+        //   continue
+        // }
 
         const rendered = await renderComponent(component)
         if (rendered) {
